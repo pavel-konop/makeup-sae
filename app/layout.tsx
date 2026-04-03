@@ -9,11 +9,16 @@ export const metadata: Metadata = {
   title: "Mitaa Makeup | Certified MUA Jakarta–Bekasi | make.up_sae",
   description:
     "Book Mitaa — certified makeup artist serving Jakarta & Bekasi. Natural elegant looks for weddings, parties, photoshoots, prom & everyday glam. WhatsApp only.",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     title: "Mitaa Makeup | Certified MUA Jakarta–Bekasi",
     description:
       "Natural elegant looks for weddings, parties, photoshoots, prom & everyday glam.",
     type: "website",
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
 };
 

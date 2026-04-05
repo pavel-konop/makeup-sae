@@ -23,7 +23,7 @@ export default function GalleryPageClient() {
   return (
     <>
       {/* Page header */}
-      <section className="px-6 pt-16 pb-10 max-w-6xl mx-auto">
+      <section className="px-5 sm:px-6 pt-12 sm:pt-16 pb-8 sm:pb-10 max-w-6xl mx-auto">
         <p
           className="text-xs font-medium tracking-[0.2em] uppercase mb-4 fade-in"
           style={{ fontFamily: "'DM Sans', sans-serif", color: "#c2185b" }}
@@ -31,7 +31,7 @@ export default function GalleryPageClient() {
           {t.gallery.eyebrow}
         </p>
         <h1
-          className="text-5xl md:text-6xl text-[#111111] mb-4 fade-in"
+          className="text-4xl sm:text-5xl md:text-6xl text-[#111111] mb-4 fade-in"
           style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300 }}
         >
           {t.gallery.title}
@@ -49,8 +49,8 @@ export default function GalleryPageClient() {
       </section>
 
       {/* Instagram CTA */}
-      <section className="border-t border-[#f0f0f0] py-16 px-6 fade-in">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+      <section className="border-t border-[#f0f0f0] py-12 sm:py-16 px-5 sm:px-6 fade-in">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 sm:gap-6">
           <div>
             <h2
               className="text-2xl text-[#111111] mb-1"
@@ -69,7 +69,7 @@ export default function GalleryPageClient() {
             href="https://instagram.com/make.up_sae"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-6 py-3 rounded-full text-sm font-medium text-white hover:opacity-90 transition-opacity whitespace-nowrap"
+            className="w-full sm:w-auto flex items-center justify-center min-h-[48px] px-6 py-3 rounded-full text-sm font-medium text-white hover:opacity-90 transition-opacity"
             style={{ backgroundColor: "#c2185b", fontFamily: "'DM Sans', sans-serif" }}
           >
             {t.gallery.instagramCta}

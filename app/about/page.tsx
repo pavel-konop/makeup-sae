@@ -38,7 +38,7 @@ export default function AboutPage() {
 
   return (
     <>
-      <section className="px-6 pt-16 pb-20 max-w-6xl mx-auto">
+      <section className="px-5 sm:px-6 pt-12 sm:pt-16 pb-14 sm:pb-20 max-w-6xl mx-auto">
         <p
           className="text-xs font-medium tracking-[0.2em] uppercase mb-12 fade-in"
           style={{ fontFamily: "'DM Sans', sans-serif", color: "#c2185b" }}

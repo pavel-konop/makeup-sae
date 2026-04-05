@@ -53,22 +53,22 @@ export default function ServicesPage() {
 
   return (
     <>
-      <section className="px-6 pt-16 pb-10 max-w-6xl mx-auto">
-        <p className="text-xs font-medium tracking-[0.2em] uppercase mb-4 fade-in"
+      <section className="px-5 sm:px-6 pt-12 sm:pt-16 pb-8 sm:pb-10 max-w-6xl mx-auto">
+        <p className="text-[11px] sm:text-xs font-medium tracking-[0.2em] uppercase mb-4 fade-in"
           style={{ fontFamily: "'DM Sans', sans-serif", color: "#c2185b" }}>
           {t.services.eyebrow}
         </p>
-        <h1 className="text-5xl md:text-6xl text-[#111111] mb-4 fade-in"
+        <h1 className="text-4xl sm:text-5xl md:text-6xl text-[#111111] mb-4 fade-in"
           style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300 }}>
           {t.services.title}
         </h1>
-        <div className="mb-6 fade-in" style={{ width: 32, height: 2, backgroundColor: "#c2185b" }} />
+        <div className="mb-5 sm:mb-6 fade-in" style={{ width: 32, height: 2, backgroundColor: "#c2185b" }} />
         <p className="text-[#888888] text-sm max-w-md fade-in" style={{ fontFamily: "'DM Sans', sans-serif" }}>
           {t.services.subtitle}
         </p>
       </section>
 
-      <section className="px-6 pb-20 max-w-6xl mx-auto">
+      <section className="px-5 sm:px-6 pb-14 sm:pb-20 max-w-6xl mx-auto">
         {services.length === 0 ? (
           // Skeleton while loading
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -117,7 +117,7 @@ export default function ServicesPage() {
         )}
       </section>
 
-      <section className="bg-[#111111] py-16 px-6 fade-in">
+      <section className="bg-[#111111] py-12 sm:py-16 px-5 sm:px-6 fade-in">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
             <h2 className="text-3xl text-white mb-2"

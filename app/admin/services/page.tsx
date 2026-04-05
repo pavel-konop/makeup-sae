@@ -45,14 +45,11 @@ export default function AdminServicesPage() {
 
   function updateLocalised(index: number, field: "title" | "desc", lang: Lang, value: string) {
     setServices((prev) =>
-      prev.map((s, i) =>
-        i === index ? { ...s, [field]: { ...s[field], [lang]: value } } : s
-      )
+      prev.map((s, i) => i === index ? { ...s, [field]: { ...s[field], [lang]: value } } : s)
     );
   }
 
-  async function handleSave(e: React.FormEvent) {
-    e.preventDefault();
+  async function doSave() {
     setSaving(true);
     setSaved(false);
     setError("");
@@ -70,6 +67,11 @@ export default function AdminServicesPage() {
     }
   }
 
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    await doSave();
+  }
+
   if (services.length === 0) {
     return (
       <div className="min-h-screen bg-[#fafafa] flex flex-col">
@@ -82,20 +84,20 @@ export default function AdminServicesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa] flex flex-col">
+    <div className="min-h-screen bg-[#fafafa] flex flex-col pb-24 sm:pb-0">
       <AdminHeader />
 
-      <div className="max-w-4xl mx-auto px-6 py-10 w-full">
-        <h1 className="text-2xl text-[#111111] mb-8" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300 }}>
+      <div className="max-w-4xl mx-auto px-5 sm:px-6 py-8 sm:py-10 w-full">
+        <h1 className="text-2xl text-[#111111] mb-6 sm:mb-8" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300 }}>
           Services
         </h1>
 
-        <form onSubmit={handleSave} className="flex flex-col gap-6">
-          {/* Language tab */}
-          <div className="flex gap-1 border-b border-[#f0f0f0]">
+        <form onSubmit={handleSave} className="flex flex-col gap-5 sm:gap-6">
+          {/* Language tabs */}
+          <div className="flex border-b border-[#f0f0f0]">
             {LANGS.map(({ key, label }) => (
               <button key={key} type="button" onClick={() => setActiveLang(key as Lang)}
-                className="px-4 py-2 text-xs font-medium border-b-2 transition-colors -mb-px"
+                className="flex-1 sm:flex-none px-3 sm:px-4 py-2.5 text-xs font-medium border-b-2 transition-colors -mb-px min-h-[44px]"
                 style={{
                   fontFamily: "'DM Sans', sans-serif",
                   borderColor: activeLang === key ? "#c2185b" : "transparent",
@@ -108,15 +110,17 @@ export default function AdminServicesPage() {
 
           {/* Service cards */}
           {services.map((service, idx) => (
-            <div key={service.key} className="bg-white border border-[#eeeeee] p-6 rounded-sm flex flex-col gap-5">
+            <div key={service.key} className="bg-white border border-[#eeeeee] p-5 sm:p-6 rounded-sm flex flex-col gap-5">
               <h2 className="text-lg text-[#111111]" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 300 }}>
                 {service.title.en}
               </h2>
 
-              {/* Icon picker */}
+              {/* Icon picker — 3-per-row on mobile via grid */}
               <div>
-                <label className="block text-xs font-medium text-[#888888] mb-2 tracking-wide uppercase" style={{ fontFamily: "'DM Sans', sans-serif" }}>Icon</label>
-                <div className="flex gap-2 flex-wrap">
+                <label className="block text-xs font-medium text-[#888888] mb-2 tracking-wide uppercase" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                  Icon
+                </label>
+                <div className="grid grid-cols-6 gap-2 max-w-xs">
                   {ICONS.map(({ name, Component }) => {
                     const selected = service.icon === name;
                     return (
@@ -124,7 +128,7 @@ export default function AdminServicesPage() {
                         key={name}
                         type="button"
                         onClick={() => updateService(idx, { icon: name })}
-                        className="w-10 h-10 rounded-lg flex items-center justify-center border-2 transition-all"
+                        className="aspect-square rounded-lg flex items-center justify-center border-2 transition-all min-h-[44px]"
                         style={{
                           borderColor: selected ? "#c2185b" : "#e0e0e0",
                           color: selected ? "#c2185b" : "#888888",
@@ -149,7 +153,7 @@ export default function AdminServicesPage() {
                   type="text"
                   value={service.title[activeLang]}
                   onChange={(e) => updateLocalised(idx, "title", activeLang, e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-[#e0e0e0] rounded-sm outline-none focus:border-[#c2185b] transition-colors"
+                  className="w-full px-3 py-3 text-sm border border-[#e0e0e0] rounded-sm outline-none focus:border-[#c2185b] transition-colors min-h-[48px]"
                   style={{ fontFamily: "'DM Sans', sans-serif" }}
                 />
               </div>
@@ -163,7 +167,7 @@ export default function AdminServicesPage() {
                   rows={3}
                   value={service.desc[activeLang]}
                   onChange={(e) => updateLocalised(idx, "desc", activeLang, e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-[#e0e0e0] rounded-sm outline-none focus:border-[#c2185b] transition-colors resize-none"
+                  className="w-full px-3 py-3 text-sm border border-[#e0e0e0] rounded-sm outline-none focus:border-[#c2185b] transition-colors resize-none"
                   style={{ fontFamily: "'DM Sans', sans-serif" }}
                 />
               </div>
@@ -177,7 +181,7 @@ export default function AdminServicesPage() {
                   type="text"
                   value={service.waText}
                   onChange={(e) => updateService(idx, { waText: e.target.value })}
-                  className="w-full px-3 py-2 text-sm border border-[#e0e0e0] rounded-sm outline-none focus:border-[#c2185b] transition-colors"
+                  className="w-full px-3 py-3 text-sm border border-[#e0e0e0] rounded-sm outline-none focus:border-[#c2185b] transition-colors min-h-[48px]"
                   style={{ fontFamily: "'DM Sans', sans-serif" }}
                   placeholder="Hi Mitaa! I'm interested in…"
                 />
@@ -186,7 +190,7 @@ export default function AdminServicesPage() {
                     href={`https://wa.link/1583yh?text=${encodeURIComponent(service.waText)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-[#c2185b] hover:underline mt-1 inline-block"
+                    className="text-xs text-[#c2185b] hover:underline mt-1.5 inline-block min-h-[32px] flex items-center"
                     style={{ fontFamily: "'DM Sans', sans-serif" }}
                   >
                     Preview link →
@@ -198,19 +202,30 @@ export default function AdminServicesPage() {
 
           {error && <p className="text-xs text-red-600" style={{ fontFamily: "'DM Sans', sans-serif" }}>{error}</p>}
 
-          <div className="flex items-center gap-4 pt-2">
+          {/* Desktop save row */}
+          <div className="hidden sm:flex items-center gap-4 pt-2">
             <button type="submit" disabled={saving}
-              className="px-6 py-2.5 rounded-full text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50"
+              className="px-6 py-2.5 rounded-full text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50 min-h-[44px]"
               style={{ backgroundColor: "#c2185b", fontFamily: "'DM Sans', sans-serif" }}>
               {saving ? "Saving…" : "Save all services"}
             </button>
-            {saved && (
-              <span className="text-xs text-green-600" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                ✓ Saved successfully
-              </span>
-            )}
+            {saved && <span className="text-xs text-green-600" style={{ fontFamily: "'DM Sans', sans-serif" }}>✓ Saved successfully</span>}
           </div>
         </form>
+      </div>
+
+      {/* Mobile sticky save bar */}
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[#eeeeee] px-5 py-3 flex items-center gap-3 z-30">
+        <button
+          type="button"
+          onClick={doSave}
+          disabled={saving}
+          className="flex-1 py-3 rounded-full text-sm font-medium text-white hover:opacity-90 transition-opacity disabled:opacity-50 min-h-[48px]"
+          style={{ backgroundColor: "#c2185b", fontFamily: "'DM Sans', sans-serif" }}
+        >
+          {saving ? "Saving…" : "Save all services"}
+        </button>
+        {saved && <span className="text-xs text-green-600 flex-shrink-0" style={{ fontFamily: "'DM Sans', sans-serif" }}>✓ Saved</span>}
       </div>
     </div>
   );

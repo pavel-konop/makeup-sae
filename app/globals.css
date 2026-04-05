@@ -17,6 +17,11 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
 }
 
 body {
@@ -25,6 +30,7 @@ body {
   font-family: 'DM Sans', sans-serif;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
+  min-width: 320px;
 }
 
 h1, h2, h3, h4, h5 {

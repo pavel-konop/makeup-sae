@@ -24,7 +24,7 @@ export default async function GalleryPage() {
     <>
       <GalleryPageClient />
 
-      <section className="px-6 pb-20 max-w-6xl mx-auto">
+      <section className="px-5 sm:px-6 pb-14 sm:pb-20 max-w-6xl mx-auto">
         <GalleryGrid images={images} />
       </section>
     </>

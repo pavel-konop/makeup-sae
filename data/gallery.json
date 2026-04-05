@@ -1,8 +1,0 @@
-[
-  { "id": "img1", "filename": "img1.jpg", "alt": "Makeup look 1", "order": 0 },
-  { "id": "img2", "filename": "img2.jpg", "alt": "Makeup look 2", "order": 1 },
-  { "id": "img3", "filename": "img3.jpg", "alt": "Makeup look 3", "order": 2 },
-  { "id": "img4", "filename": "img4.jpg", "alt": "Makeup look 4", "order": 3 },
-  { "id": "img5", "filename": "img5.jpg", "alt": "Makeup look 5", "order": 4 },
-  { "id": "img6", "filename": "img6.jpg", "alt": "Makeup look 6", "order": 5 }
-]

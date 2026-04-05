@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getIronSession } from "iron-session";
 import { sessionOptions, SessionData } from "@/lib/session";
-import { getManifest, saveManifest } from "@/lib/gallery";
-import fs from "fs/promises";
-import path from "path";
-import crypto from "crypto";
+import cloudinary from "@/lib/cloudinary";
 
 export async function POST(req: NextRequest) {
   const authRes = new NextResponse();
@@ -15,7 +12,6 @@ export async function POST(req: NextRequest) {
 
   const formData = await req.formData();
   const file = formData.get("file") as File | null;
-  const alt = (formData.get("alt") as string | null) ?? "Makeup look";
 
   if (!file) {
     return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -26,19 +22,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
   }
 
-  const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-  const id = crypto.randomUUID();
-  const filename = `${id}.${ext}`;
-  const galleryDir = path.join(process.cwd(), "public", "gallery");
-
-  await fs.mkdir(galleryDir, { recursive: true });
-
   const bytes = await file.arrayBuffer();
-  await fs.writeFile(path.join(galleryDir, filename), Buffer.from(bytes));
+  const buffer = Buffer.from(bytes);
 
-  const manifest = await getManifest();
-  manifest.push({ id, filename, alt, order: manifest.length });
-  await saveManifest(manifest);
+  const result = await new Promise<{ secure_url: string; public_id: string }>(
+    (resolve, reject) => {
+      cloudinary.uploader
+        .upload_stream({ folder: "makeup-sae/gallery" }, (error, result) => {
+          if (error || !result) return reject(error ?? new Error("Upload failed"));
+          resolve({ secure_url: result.secure_url, public_id: result.public_id });
+        })
+        .end(buffer);
+    }
+  );
 
-  return NextResponse.json({ id, filename, alt });
+  return NextResponse.json(result);
 }

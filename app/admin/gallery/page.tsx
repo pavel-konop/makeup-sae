@@ -3,15 +3,20 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { GalleryImage } from "@/lib/gallery";
+
+interface CloudinaryImage {
+  url: string;
+  public_id: string;
+  created_at: string;
+}
 
 export default function AdminGalleryPage() {
-  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [images, setImages] = useState<CloudinaryImage[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [uploadAlt, setUploadAlt] = useState("");
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -33,12 +38,7 @@ export default function AdminGalleryPage() {
   function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null;
     setUploadFile(file);
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setPreview(url);
-    } else {
-      setPreview(null);
-    }
+    setPreview(file ? URL.createObjectURL(file) : null);
   }
 
   async function handleUpload(e: React.FormEvent) {
@@ -49,7 +49,6 @@ export default function AdminGalleryPage() {
 
     const formData = new FormData();
     formData.append("file", uploadFile);
-    formData.append("alt", uploadAlt || "Makeup look");
 
     const res = await fetch("/api/admin/upload", {
       method: "POST",
@@ -60,7 +59,6 @@ export default function AdminGalleryPage() {
 
     if (res.ok) {
       setUploadFile(null);
-      setUploadAlt("");
       setPreview(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
       await loadImages();
@@ -70,12 +68,29 @@ export default function AdminGalleryPage() {
     }
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Delete this photo?")) return;
-    setDeletingId(id);
-    await fetch(`/api/admin/delete/${id}`, { method: "DELETE" });
+  async function handleDelete(publicId: string) {
+    const confirmed = confirm(
+      "Are you sure you want to delete this image? This cannot be undone."
+    );
+    if (!confirmed) return;
+
+    setDeletingId(publicId);
+    setDeleteError(null);
+
+    const res = await fetch(
+      `/api/admin/delete/${encodeURIComponent(publicId)}`,
+      { method: "DELETE" }
+    );
+
+    if (res.ok) {
+      // Only remove from UI after Cloudinary confirms deletion
+      setImages((prev) => prev.filter((img) => img.public_id !== publicId));
+    } else {
+      const data = await res.json();
+      setDeleteError(data.error ?? "Deletion failed — please try again.");
+    }
+
     setDeletingId(null);
-    await loadImages();
   }
 
   async function handleLogout() {
@@ -179,28 +194,8 @@ export default function AdminGalleryPage() {
                 </button>
               </div>
 
-              <div>
-                <label
-                  className="block text-xs font-medium text-[#888888] mb-1 tracking-wide uppercase"
-                  style={{ fontFamily: "'DM Sans', sans-serif" }}
-                >
-                  Alt text (optional)
-                </label>
-                <input
-                  type="text"
-                  value={uploadAlt}
-                  onChange={(e) => setUploadAlt(e.target.value)}
-                  placeholder="e.g. Bridal look, soft glam"
-                  className="w-full max-w-sm px-3 py-2 text-sm border border-[#e0e0e0] rounded-sm outline-none focus:border-[#c2185b] transition-colors"
-                  style={{ fontFamily: "'DM Sans', sans-serif" }}
-                />
-              </div>
-
               {error && (
-                <p
-                  className="text-xs text-red-600"
-                  style={{ fontFamily: "'DM Sans', sans-serif" }}
-                >
+                <p className="text-xs text-red-600" style={{ fontFamily: "'DM Sans', sans-serif" }}>
                   {error}
                 </p>
               )}
@@ -217,6 +212,21 @@ export default function AdminGalleryPage() {
           </form>
         </div>
 
+        {/* Delete error banner */}
+        {deleteError && (
+          <div className="mb-6 px-4 py-3 bg-red-50 border border-red-200 rounded-sm flex items-center justify-between">
+            <p className="text-xs text-red-600" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              {deleteError}
+            </p>
+            <button
+              onClick={() => setDeleteError(null)}
+              className="text-xs text-red-400 hover:text-red-600 ml-4"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
         {/* Gallery grid */}
         <div className="flex items-center justify-between mb-4">
           <h2
@@ -228,19 +238,22 @@ export default function AdminGalleryPage() {
         </div>
 
         {images.length === 0 ? (
-          <div className="text-center py-20 text-[#888888] text-sm" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+          <div
+            className="text-center py-20 text-[#888888] text-sm"
+            style={{ fontFamily: "'DM Sans', sans-serif" }}
+          >
             No photos yet. Upload the first one above.
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {images.map((img) => (
               <div
-                key={img.id}
+                key={img.public_id}
                 className="relative group aspect-square bg-[#f5f0f2] overflow-hidden rounded-sm"
               >
                 <Image
-                  src={`/gallery/${img.filename}`}
-                  alt={img.alt}
+                  src={img.url}
+                  alt={img.public_id.split("/").pop() ?? "Makeup look"}
                   fill
                   className="object-cover"
                   sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
@@ -248,19 +261,13 @@ export default function AdminGalleryPage() {
 
                 {/* Hover overlay */}
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2">
-                  <p
-                    className="text-white text-xs text-center line-clamp-2"
-                    style={{ fontFamily: "'DM Sans', sans-serif" }}
-                  >
-                    {img.alt}
-                  </p>
                   <button
-                    onClick={() => handleDelete(img.id)}
-                    disabled={deletingId === img.id}
+                    onClick={() => handleDelete(img.public_id)}
+                    disabled={deletingId === img.public_id}
                     className="px-3 py-1 bg-red-600 text-white text-xs rounded-full hover:bg-red-700 transition-colors disabled:opacity-50"
                     style={{ fontFamily: "'DM Sans', sans-serif" }}
                   >
-                    {deletingId === img.id ? "Deleting…" : "Delete"}
+                    {deletingId === img.public_id ? "Deleting…" : "Delete"}
                   </button>
                 </div>
               </div>

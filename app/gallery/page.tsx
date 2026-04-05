@@ -2,6 +2,8 @@ import GalleryGrid from "@/components/GalleryGrid";
 import cloudinary from "@/lib/cloudinary";
 import GalleryPageClient from "./GalleryPageClient";
 
+export const dynamic = "force-dynamic";
+
 async function getGalleryImages() {
   const result = await cloudinary.search
     .expression("folder:makeup-sae/gallery")

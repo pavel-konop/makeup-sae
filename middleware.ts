@@ -4,14 +4,11 @@ import { sessionOptions, SessionData } from "@/lib/session";
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
+  const { pathname } = request.nextUrl;
 
-  if (request.nextUrl.pathname.startsWith("/admin/gallery")) {
-    const session = await getIronSession<SessionData>(
-      request,
-      response,
-      sessionOptions
-    );
-
+  // Protect all /admin/* sub-routes (but not /admin itself — that's the login page)
+  if (pathname.startsWith("/admin/")) {
+    const session = await getIronSession<SessionData>(request, response, sessionOptions);
     if (!session.isAdmin) {
       return NextResponse.redirect(new URL("/admin", request.url));
     }

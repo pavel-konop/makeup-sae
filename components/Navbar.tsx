@@ -72,8 +72,24 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Desktop right: lang + book */}
+        {/* Desktop right: IG + lang + book */}
         <div className="hidden md:flex items-center gap-3">
+          <a
+            href="https://instagram.com/make.up_sae"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="@make.up_sae"
+            className="flex items-center justify-center w-9 h-9 rounded-full transition-colors"
+            style={{ color: "#888888" }}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#c2185b")}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.color = "#888888")}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} width={20} height={20}>
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
+            </svg>
+          </a>
           <div className="flex items-center gap-1">
             {LANG_OPTIONS.map((opt) => (
               <button
@@ -140,6 +156,22 @@ export default function Navbar() {
               {label}
             </Link>
           ))}
+
+          {/* Instagram */}
+          <a
+            href="https://instagram.com/make.up_sae"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 text-sm min-h-[44px] px-1 border-b border-[#f7f7f7]"
+            style={{ fontFamily: "'DM Sans', sans-serif", color: "#111111" }}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} width={18} height={18} style={{ color: "#c2185b", flexShrink: 0 }}>
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" />
+            </svg>
+            Instagram · @make.up_sae
+          </a>
 
           {/* Language switcher */}
           <div className="flex items-center gap-2 py-3 border-t border-[#f0f0f0] mt-1">

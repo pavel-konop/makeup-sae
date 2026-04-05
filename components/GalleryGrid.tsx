@@ -3,32 +3,34 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-interface CloudinaryImage {
+export interface CloudinaryImage {
   url: string;
   public_id: string;
-  created_at: string;
 }
 
 interface GalleryGridProps {
+  images?: CloudinaryImage[];
   limit?: number;
 }
 
-export default function GalleryGrid({ limit }: GalleryGridProps) {
-  const [images, setImages] = useState<CloudinaryImage[]>([]);
+export default function GalleryGrid({ images: imagesProp, limit }: GalleryGridProps) {
+  const [fetched, setFetched] = useState<CloudinaryImage[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Only fetch client-side when no images were passed as props (e.g. home page)
   useEffect(() => {
+    if (imagesProp !== undefined) return;
     fetch("/api/gallery")
       .then((r) => r.json())
-      .then((data: CloudinaryImage[]) => {
-        setImages(limit ? data.slice(0, limit) : data);
-      })
+      .then((data: CloudinaryImage[]) => setFetched(data))
       .catch(() => {});
-  }, [limit]);
+  }, [imagesProp]);
+
+  const all = imagesProp ?? fetched;
+  const images = limit ? all.slice(0, limit) : all;
 
   useEffect(() => {
     if (images.length === 0) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -37,10 +39,7 @@ export default function GalleryGrid({ limit }: GalleryGridProps) {
       },
       { threshold: 0.1 }
     );
-
-    const items = containerRef.current?.querySelectorAll(".fade-in");
-    items?.forEach((el) => observer.observe(el));
-
+    containerRef.current?.querySelectorAll(".fade-in").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, [images]);
 
